@@ -152,11 +152,11 @@ const handleLogin = () => {
 }
 
 .form-input {
-  padding: 1.8rem 1rem;
+  padding: 1rem 1rem;
   
   border: 1px solid #8abdf0;
   border-radius: 8px;
-  font-size: 1rem;
+  font-size: 1.2rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   background-color: #ffffff;
 }
@@ -174,7 +174,7 @@ const handleLogin = () => {
 .login-button {
   background-color: #0F7CBC;
   color: white;
-  padding: 1.8rem 1rem;
+  padding: 1rem 1rem;
   border: none;
   border-radius: 8px;
   font-size: 1.2rem;

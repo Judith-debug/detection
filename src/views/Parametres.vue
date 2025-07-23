@@ -1,1125 +1,614 @@
 <template>
-  <div class="settings-container">
-    
-    <aside class="sidebar">
+  <div class="settings-page">
+    <div class="burger-menu" @click="toggleSidebar">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <nav class="sidebar" :class="{ 'sidebar-collapsed': isSidebarCollapsed }">
       <div class="sidebar-header">
         <div class="logo">
-          <div class="logo-icon">🛡️</div>
-          <h2>Fraud Stop</h2>
+          <svg class="shield-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L3 7V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V7L12 2Z" fill="white"/>
+            <path d="M9 12L11 14L15 10" stroke="#0F7CBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="logo-text" v-if="!isSidebarCollapsed">Fraud Stop</span>
         </div>
       </div>
-      
-      <nav class="sidebar-nav">
-        <button 
-          v-for="section in sections" 
-          :key="section.id"
-          :class="['nav-item', { active: activeSection === section.id }]"
-          @click="activeSection = section.id"
-        >
-          <span class="nav-icon">{{ section.icon }}</span>
-          <span class="nav-label">{{ section.label }}</span>
-        </button>
-      </nav>
-    </aside>
 
-   
-    <main class="main-content">
-      <header class="content-header">
-        <div class="header-info">
-          <h1>{{ getCurrentSection().label }}</h1>
-          <p>{{ getCurrentSection().description }}</p>
+      <div class="nav-menu">
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span v-if="!isSidebarCollapsed">Dashboard</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 11H15M9 15H15M17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L19.7071 9.70711C19.8946 9.89464 20 10.149 20 10.4142V19C20 20.1046 19.1046 21 18 21H17Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span v-if="!isSidebarCollapsed">Transactions</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10.29 3.86L1.82 18A2 2 0 0 0 3.24 21H20.76A2 2 0 0 0 22.18 18L13.71 3.86A2 2 0 0 0 10.29 3.86Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 9V13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span v-if="!isSidebarCollapsed">Alertes</span>
+        </a>
+
+        <a href="#" class="nav-item">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 9H9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span v-if="!isSidebarCollapsed">Rapports</span>
+        </a>
+
+        <a href="#" class="nav-item active">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+            <path d="M19.4 15C19.2669 15.3016 19.2272 15.6362 19.286 15.9606C19.3448 16.285 19.4995 16.5843 19.73 16.82L19.79 16.88C19.976 17.0657 20.1235 17.2863 20.2241 17.5291C20.3248 17.7719 20.3766 18.0322 20.3766 18.295C20.3766 18.5578 20.3248 18.8181 20.2241 19.0609C20.1235 19.3037 19.976 19.5243 19.79 19.71C19.6043 19.896 19.3837 20.0435 19.1409 20.1441C18.8981 20.2448 18.6378 20.2966 18.375 20.2966C18.1122 20.2966 17.8519 20.2448 17.6091 20.1441C17.3663 20.0435 17.1457 19.896 16.96 19.71L16.9 19.65C16.6643 19.4195 16.365 19.2648 16.0406 19.206C15.7162 19.1472 15.3816 19.1869 15.08 19.32C14.7842 19.4468 14.532 19.6572 14.3543 19.9255C14.1766 20.1938 14.0813 20.5082 14.08 20.83V21C14.08 21.5304 13.8693 22.0391 13.4942 22.4142C13.1191 22.7893 12.6104 23 12.08 23C11.5496 23 11.0409 22.7893 10.6658 22.4142C10.2907 22.0391 10.08 21.5304 10.08 21V20.91C10.0723 20.579 9.96512 20.2579 9.77251 19.9887C9.5799 19.7194 9.31074 19.5143 9 19.4C8.69838 19.2669 8.36381 19.2272 8.03941 19.286C7.71502 19.3448 7.41568 19.4995 7.18 19.73L7.12 19.79C6.93425 19.976 6.71368 20.1235 6.47088 20.2241C6.22808 20.3248 5.96783 20.3766 5.705 20.3766C5.44217 20.3766 5.18192 20.3248 4.93912 20.2241C4.69632 20.1235 4.47575 19.976 4.29 19.79C4.10405 19.6043 3.95653 19.3837 3.85588 19.1409C3.75523 18.8981 3.70343 18.6378 3.70343 18.375C3.70343 18.1122 3.75523 17.8519 3.85588 17.6091C3.95653 17.3663 4.10405 17.1457 4.29 16.96L4.35 16.9C4.58054 16.6643 4.73519 16.365 4.794 16.0406C4.85282 15.7162 4.81312 15.3816 4.68 15.08C4.55324 14.7842 4.34276 14.532 4.07447 14.3543C3.80618 14.1766 3.49179 14.0813 3.17 14.08H3C2.46957 14.08 1.96086 13.8693 1.58579 13.4942C1.21071 13.1191 1 12.6104 1 12.08C1 11.5496 1.21071 11.0409 1.58579 10.6658C1.96086 10.2907 2.46957 10.08 3 10.08H3.09C3.42099 10.0723 3.742 9.96512 4.01127 9.77251C4.28054 9.5799 4.48571 9.31074 4.6 9C4.73312 8.69838 4.77282 8.36381 4.714 8.03941C4.65519 7.71502 4.50054 7.41568 4.27 7.18L4.21 7.12C4.02405 6.93425 3.87653 6.71368 3.77588 6.47088C3.67523 6.22808 3.62343 5.96783 3.62343 5.705C3.62343 5.44217 3.67523 5.18192 3.77588 4.93912C3.87653 4.69632 4.02405 4.47575 4.21 4.29C4.39575 4.10405 4.61632 3.95653 4.85912 3.85588C5.10192 3.75523 5.36217 3.70343 5.625 3.70343C5.88783 3.70343 6.14808 3.75523 6.39088 3.85588C6.63368 3.95653 6.85425 4.10405 7.04 4.29L7.1 4.35C7.33568 4.58054 7.63502 4.73519 7.95941 4.794C8.28381 4.85282 8.61838 4.81312 8.92 4.68H9C9.29577 4.55324 9.54802 4.34276 9.72569 4.07447C9.90337 3.80618 9.99872 3.49179 10 3.17V3C10 2.46957 10.2107 1.96086 10.5858 1.58579C10.9609 1.21071 11.4696 1 12 1C12.5304 1 13.0391 1.21071 13.4142 1.58579C13.7893 1.96086 14 2.46957 14 3V3.09C14.0013 3.41179 14.0966 3.72618 14.2743 3.99447C14.452 4.26276 14.7042 4.47324 15 4.6C15.3016 4.73312 15.6362 4.77282 15.9606 4.714C16.285 4.65519 16.5843 4.50054 16.82 4.27L16.88 4.21C17.0657 4.02405 17.2863 3.87653 17.5291 3.77588C17.7719 3.67523 18.0322 3.62343 18.295 3.62343C18.5578 3.62343 18.8181 3.67523 19.0609 3.77588C19.3037 3.87653 19.5243 4.02405 19.71 4.21C19.896 4.39575 20.0435 4.61632 20.1441 4.85912C20.2448 5.10192 20.2966 5.36217 20.2966 5.625C20.2966 5.88783 20.2448 6.14808 20.1441 6.39088C20.0435 6.63368 19.896 6.85425 19.71 7.04L19.65 7.1C19.4195 7.33568 19.2648 7.63502 19.206 7.95941C19.1472 8.28381 19.1869 8.61838 19.32 8.92V9C19.4468 9.29577 19.6572 9.54802 19.9255 9.72569C20.1938 9.90337 20.5082 9.99872 20.83 10H21C21.5304 10 22.0391 10.2107 22.4142 10.5858C22.7893 10.9609 23 11.4696 23 12C23 12.5304 22.7893 13.0391 22.4142 13.4142C22.0391 13.7893 21.5304 14 21 14H20.91C20.5882 14.0013 20.2738 14.0966 20.0055 14.2743C19.7372 14.452 19.5268 14.7042 19.4 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span v-if="!isSidebarCollapsed">Paramètres</span>
+        </a>
+      </div>
+
+      <div class="nav-bottom">
+        <a href="#" class="nav-item logout">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M16 17L21 12L16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span v-if="!isSidebarCollapsed">Déconnexion</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="main-content" :class="{ 'main-content-expanded': isSidebarCollapsed }">
+      <div class="page-header">
+        <div class="header-content">
+          <h1 class="page-title">Paramètres</h1>
+          <p class="page-subtitle">Gérez les paramètres de votre application de détection de fraude</p>
         </div>
-        <div class="header-actions">
-          <button class="btn-icon" @click="refreshSettings">
-            <span>🔄</span>
-          </button>
-          <button class="btn-primary" @click="saveSettings">
-            Enregistrer
-          </button>
-        </div>
-      </header>
+      </div>
 
-      <div v-if="activeSection === 'security'" class="settings-section">
-        <div class="setting-group">
-          <h3>Authentification</h3>
-          <div class="settings-row">
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Authentification à deux facteurs</h4>
-                <p>Sécurisez votre compte avec une couche supplémentaire</p>
-              </div>
-              <div class="setting-control">
-                <label class="modern-switch">
-                  <input 
-                    type="checkbox" 
-                    v-model="settings.security.twoFactorAuth"
-                    @change="updateSetting('security', 'twoFactorAuth', $event.target.checked)"
-                  >
-                  <span class="switch-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Verrouillage automatique</h4>
-                <p>Temps d'inactivité avant verrouillage</p>
-              </div>
-              <div class="setting-control">
-                <select 
-                  v-model="settings.security.autoLock" 
-                  @change="updateSetting('security', 'autoLock', $event.target.value)"
-                  class="modern-select"
-                >
-                  <option value="5">5 minutes</option>
-                  <option value="15">15 minutes</option>
-                  <option value="30">30 minutes</option>
-                  <option value="60">1 heure</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Tentatives de connexion</h4>
-                <p>Nombre maximum avant blocage</p>
-              </div>
-              <div class="setting-control">
-                <div class="number-input">
-                  <button @click="decrementAttempts" class="number-btn">-</button>
-                  <input 
-                    type="number" 
-                    v-model="settings.security.maxAttempts" 
-                    @change="updateSetting('security', 'maxAttempts', $event.target.value)"
-                    min="3" 
-                    max="10"
-                    class="number-field"
-                  >
-                  <button @click="incrementAttempts" class="number-btn">+</button>
-                </div>
-              </div>
-            </div>
+      <div class="settings-container">
+        <div class="settings-tabs">
+          <div class="tabs-header">
+            <button class="tab-button" :class="{ 'active': activeTab === 'general' }" @click="activeTab = 'general'">
+              Général
+            </button>
+            <button class="tab-button" :class="{ 'active': activeTab === 'notifications' }" @click="activeTab = 'notifications'">
+              Notifications
+            </button>
+            <button class="tab-button" :class="{ 'active': activeTab === 'security' }" @click="activeTab = 'security'">
+              Sécurité
+            </button>
+            <button class="tab-button" :class="{ 'active': activeTab === 'fraud-rules' }" @click="activeTab = 'fraud-rules'">
+              Règles de fraude
+            </button>
           </div>
-        </div>
-      </div>
 
-     
-      <div v-if="activeSection === 'fraud'" class="settings-section">
-        <div class="setting-group">
-          <h3>Seuils de détection</h3>
-          <div class="settings-row">
-            <div class="setting-card full-width">
-              <div class="setting-info">
-                <h4>Seuil de risque élevé</h4>
-                <p>Probabilité à partir de laquelle une transaction est considérée à haut risque</p>
+          <div class="tabs-content">
+            <div class="tab-pane" v-if="activeTab === 'general'">
+              <h2>Paramètres généraux</h2>
+              <div class="settings-form">
+                <div class="form-group">
+                  <label for="app-name">Nom de l'application</label>
+                  <input type="text" id="app-name" v-model="appName" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label for="language">Langue</label>
+                  <select id="language" v-model="language" class="form-select">
+                    <option value="fr">Français</option>
+                    <option value="en">Anglais</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="timezone">Fuseau horaire</label>
+                  <select id="timezone" v-model="timezone" class="form-select">
+                    <option value="GMT+1">GMT+1 (Africa/Abidjan)</option>
+                    <option value="GMT">GMT (Africa/Accra)</option>
+                    <option value="GMT+2">GMT+2 (Africa/Cairo)</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="currency">Devise</label>
+                  <select id="currency" v-model="currency" class="form-select">
+                    <option value="XOF">FCFA (XOF)</option>
+                    <option value="USD">Dollar américain (USD)</option>
+                    <option value="EUR">Euro (EUR)</option>
+                  </select>
+                </div>
+
+                <button class="save-button">Enregistrer les modifications</button>
               </div>
-              <div class="setting-control">
-                <div class="slider-group">
-                  <input 
-                    type="range" 
-                    v-model="settings.fraudDetection.highRiskThreshold" 
-                    @input="updateSetting('fraudDetection', 'highRiskThreshold', $event.target.value)"
-                    min="0.5" 
-                    max="1.0" 
-                    step="0.01"
-                    class="modern-slider"
-                  >
-                  <div class="slider-labels">
-                    <span>50%</span>
-                    <span class="current-value">{{ (settings.fraudDetection.highRiskThreshold * 100).toFixed(0) }}%</span>
-                    <span>100%</span>
+            </div>
+
+            <div class="tab-pane" v-if="activeTab === 'notifications'">
+              <h2>Paramètres de notification</h2>
+              <div class="settings-form">
+                <div class="form-group">
+                  <label for="email-notifications">Notifications par e-mail</label>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="email-notifications" v-model="emailNotifications" class="toggle-input">
+                    <label for="email-notifications" class="toggle-label"></label>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Montant maximum</h4>
-                <p>Limite en FCFA pour les transactions</p>
-              </div>
-              <div class="setting-control">
-                <div class="amount-input">
-                  <input 
-                    type="text" 
-                    :value="formatAmount(settings.fraudDetection.maxAmount)" 
-                    @input="updateAmount($event.target.value)"
-                    class="modern-input"
-                    placeholder="1 000 000"
-                  >
-                  <span class="currency">FCFA</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Analyse en temps réel</h4>
-                <p>Traitement immédiat des transactions</p>
-              </div>
-              <div class="setting-control">
-                <label class="modern-switch">
-                  <input 
-                    type="checkbox" 
-                    v-model="settings.fraudDetection.realTimeAnalysis"
-                    @change="updateSetting('fraudDetection', 'realTimeAnalysis', $event.target.checked)"
-                  >
-                  <span class="switch-slider"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    
-      <div v-if="activeSection === 'notifications'" class="settings-section">
-        <div class="setting-group">
-          <h3>Préférences de notification</h3>
-          <div class="settings-row">
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Alertes par email</h4>
-                <p>Recevoir les notifications par email</p>
-              </div>
-              <div class="setting-control">
-                <label class="modern-switch">
-                  <input 
-                    type="checkbox" 
-                    v-model="settings.notifications.email"
-                    @change="updateSetting('notifications', 'email', $event.target.checked)"
-                  >
-                  <span class="switch-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Notifications push</h4>
-                <p>Alertes instantanées sur votre appareil</p>
-              </div>
-              <div class="setting-control">
-                <label class="modern-switch">
-                  <input 
-                    type="checkbox" 
-                    v-model="settings.notifications.push"
-                    @change="updateSetting('notifications', 'push', $event.target.checked)"
-                  >
-                  <span class="switch-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Fréquence des rapports</h4>
-                <p>À quelle fréquence recevoir les rapports</p>
-              </div>
-              <div class="setting-control">
-                <select 
-                  v-model="settings.notifications.reportFrequency" 
-                  @change="updateSetting('notifications', 'reportFrequency', $event.target.value)"
-                  class="modern-select"
-                >
-                  <option value="daily">Quotidien</option>
-                  <option value="weekly">Hebdomadaire</option>
-                  <option value="monthly">Mensuel</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- System Section -->
-      <div v-if="activeSection === 'system'" class="settings-section">
-        <div class="setting-group">
-          <h3>Configuration système</h3>
-          <div class="settings-row">
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Rétention des données</h4>
-                <p>Durée de conservation en jours</p>
-              </div>
-              <div class="setting-control">
-                <div class="number-input">
-                  <button @click="decrementRetention" class="number-btn">-</button>
-                  <input 
-                    type="number" 
-                    v-model="settings.system.dataRetention" 
-                    @change="updateSetting('system', 'dataRetention', $event.target.value)"
-                    min="30" 
-                    max="365"
-                    class="number-field"
-                  >
-                  <button @click="incrementRetention" class="number-btn">+</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Mode maintenance</h4>
-                <p>Activer le mode maintenance</p>
-              </div>
-              <div class="setting-control">
-                <label class="modern-switch">
-                  <input 
-                    type="checkbox" 
-                    v-model="settings.system.maintenanceMode"
-                    @change="updateSetting('system', 'maintenanceMode', $event.target.checked)"
-                  >
-                  <span class="switch-slider"></span>
-                </label>
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Niveau de log</h4>
-                <p>Détail des journaux système</p>
-              </div>
-              <div class="setting-control">
-                <select 
-                  v-model="settings.system.logLevel" 
-                  @change="updateSetting('system', 'logLevel', $event.target.value)"
-                  class="modern-select"
-                >
-                  <option value="error">Erreur</option>
-                  <option value="warn">Avertissement</option>
-                  <option value="info">Information</option>
-                  <option value="debug">Debug</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- API Section -->
-      <div v-if="activeSection === 'api'" class="settings-section">
-        <div class="setting-group">
-          <h3>Configuration API</h3>
-          <div class="settings-row">
-            <div class="setting-card full-width">
-              <div class="setting-info">
-                <h4>URL API principale</h4>
-                <p>Point d'entrée de l'API de détection</p>
-              </div>
-              <div class="setting-control">
-                <input 
-                  type="url" 
-                  v-model="settings.api.baseUrl" 
-                  @change="updateSetting('api', 'baseUrl', $event.target.value)"
-                  class="modern-input"
-                  placeholder="https://api.fraudguard.com"
-                >
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Timeout</h4>
-                <p>Délai d'attente en secondes</p>
-              </div>
-              <div class="setting-control">
-                <div class="number-input">
-                  <button @click="decrementTimeout" class="number-btn">-</button>
-                  <input 
-                    type="number" 
-                    v-model="settings.api.timeout" 
-                    @change="updateSetting('api', 'timeout', $event.target.value)"
-                    min="5" 
-                    max="60"
-                    class="number-field"
-                  >
-                  <button @click="incrementTimeout" class="number-btn">+</button>
-                </div>
-              </div>
-            </div>
-
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Retry automatique</h4>
-                <p>Nouvelle tentative en cas d'échec</p>
-              </div>
-              <div class="setting-control">
-                <label class="modern-switch">
-                  <input 
-                    type="checkbox" 
-                    v-model="settings.api.autoRetry"
-                    @change="updateSetting('api', 'autoRetry', $event.target.checked)"
-                  >
-                  <span class="switch-slider"></span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- ML Section -->
-      <div v-if="activeSection === 'ml'" class="settings-section">
-        <div class="setting-group">
-          <h3>Intelligence artificielle</h3>
-          <div class="settings-row">
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Version du modèle</h4>
-                <p>Modèle ML actuellement utilisé</p>
-              </div>
-              <div class="setting-control">
-                <select 
-                  v-model="settings.ml.modelVersion" 
-                  @change="updateSetting('ml', 'modelVersion', $event.target.value)"
-                  class="modern-select"
-                >
-                  <option value="v1.0">Version 1.0</option>
-                  <option value="v1.1">Version 1.1</option>
-                  <option value="v2.0">Version 2.0 (Beta)</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="setting-card full-width">
-              <div class="setting-info">
-                <h4>Seuil de confiance</h4>
-                <p>Niveau de certitude minimum pour les prédictions</p>
-              </div>
-              <div class="setting-control">
-                <div class="slider-group">
-                  <input 
-                    type="range" 
-                    v-model="settings.ml.confidenceThreshold" 
-                    @input="updateSetting('ml', 'confidenceThreshold', $event.target.value)"
-                    min="0.5" 
-                    max="0.99" 
-                    step="0.01"
-                    class="modern-slider"
-                  >
-                  <div class="slider-labels">
-                    <span>50%</span>
-                    <span class="current-value">{{ (settings.ml.confidenceThreshold * 100).toFixed(0) }}%</span>
-                    <span>99%</span>
+                <div class="form-group">
+                  <label for="sms-notifications">Notifications par SMS</label>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="sms-notifications" v-model="smsNotifications" class="toggle-input">
+                    <label for="sms-notifications" class="toggle-label"></label>
                   </div>
                 </div>
+
+                <div class="form-group">
+                  <label for="push-notifications">Notifications push</label>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="push-notifications" v-model="pushNotifications" class="toggle-input">
+                    <label for="push-notifications" class="toggle-label"></label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="notification-frequency">Fréquence des notifications</label>
+                  <select id="notification-frequency" v-model="notificationFrequency" class="form-select">
+                    <option value="realtime">En temps réel</option>
+                    <option value="hourly">Heure par heure</option>
+                    <option value="daily">Quotidien</option>
+                  </select>
+                </div>
+
+                <button class="save-button">Enregistrer les modifications</button>
               </div>
             </div>
 
-            <div class="setting-card">
-              <div class="setting-info">
-                <h4>Apprentissage adaptatif</h4>
-                <p>Amélioration continue du modèle</p>
+            <div class="tab-pane" v-if="activeTab === 'security'">
+              <h2>Paramètres de sécurité</h2>
+              <div class="settings-form">
+                <div class="form-group">
+                  <label for="password">Changer le mot de passe</label>
+                  <input type="password" id="password" placeholder="Nouveau mot de passe" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label for="confirm-password">Confirmer le mot de passe</label>
+                  <input type="password" id="confirm-password" placeholder="Confirmer le mot de passe" class="form-input">
+                </div>
+
+                <div class="form-group">
+                  <label for="session-timeout">Délai d'expiration de la session</label>
+                  <select id="session-timeout" v-model="sessionTimeout" class="form-select">
+                    <option value="15">15 minutes</option>
+                    <option value="30">30 minutes</option>
+                    <option value="60">1 heure</option>
+                    <option value="120">2 heures</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="2fa">Authentification à deux facteurs</label>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="2fa" v-model="twoFactorAuth" class="toggle-input">
+                    <label for="2fa" class="toggle-label"></label>
+                  </div>
+                </div>
+
+                <button class="save-button">Enregistrer les modifications</button>
               </div>
-              <div class="setting-control">
-                <label class="modern-switch">
-                  <input 
-                    type="checkbox" 
-                    v-model="settings.ml.adaptiveLearning"
-                    @change="updateSetting('ml', 'adaptiveLearning', $event.target.checked)"
-                  >
-                  <span class="switch-slider"></span>
-                </label>
+            </div>
+
+            <div class="tab-pane" v-if="activeTab === 'fraud-rules'">
+              <h2>Règles de détection de fraude</h2>
+              <div class="settings-form">
+                <div class="form-group">
+                  <label for="transaction-limit">Limite de transaction</label>
+                  <input type="number" id="transaction-limit" v-model="transactionLimit" class="form-input">
+                  <span class="input-unit">FCFA</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="transaction-velocity">Vitesse de transaction</label>
+                  <input type="number" id="transaction-velocity" v-model="transactionVelocity" class="form-input">
+                  <span class="input-unit">transactions/minute</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="geolocation">Vérification géolocalisation</label>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="geolocation" v-model="geolocationCheck" class="toggle-input">
+                    <label for="geolocation" class="toggle-label"></label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="ip-check">Vérification IP</label>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="ip-check" v-model="ipCheck" class="toggle-input">
+                    <label for="ip-check" class="toggle-label"></label>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="device-fingerprinting">Device Fingerprinting</label>
+                  <div class="toggle-switch">
+                    <input type="checkbox" id="device-fingerprinting" v-model="deviceFingerprinting" class="toggle-input">
+                    <label for="device-fingerprinting" class="toggle-label"></label>
+                  </div>
+                </div>
+
+                <button class="save-button">Enregistrer les modifications</button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
-
-    <!-- Toast Notification -->
-    <div class="toast-container">
-      <div class="toast" :class="{ show: showToast, [toastType]: true }">
-        <span class="toast-icon">{{ toastIcon }}</span>
-        <span class="toast-message">{{ toastMessage }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref } from 'vue'
 
-interface Settings {
-  security: {
-    twoFactorAuth: boolean;
-    autoLock: number;
-    maxAttempts: number;
-  };
-  fraudDetection: {
-    highRiskThreshold: number;
-    maxAmount: number;
-    realTimeAnalysis: boolean;
-  };
-  notifications: {
-    email: boolean;
-    push: boolean;
-    reportFrequency: string;
-  };
-  system: {
-    dataRetention: number;
-    maintenanceMode: boolean;
-    logLevel: string;
-  };
-  api: {
-    baseUrl: string;
-    timeout: number;
-    autoRetry: boolean;
-  };
-  ml: {
-    modelVersion: string;
-    confidenceThreshold: number;
-    adaptiveLearning: boolean;
-  };
-}
+const isSidebarCollapsed = ref(false)
+const activeTab = ref('general')
 
-const activeSection = ref('security')
-const showToast = ref(false)
-const toastMessage = ref('')
-const toastType = ref('success')
-const toastIcon = ref('✅')
+// General settings
+const appName = ref('Fraud Stop')
+const language = ref('fr')
+const timezone = ref('GMT+1')
+const currency = ref('XOF')
 
-const sections = [
-  { id: 'security', label: 'Sécurité', icon: '🔒', description: 'Gérez les paramètres de sécurité et d\'authentification' },
-  { id: 'fraud', label: 'Détection', icon: '🎯', description: 'Configurez les seuils et règles de détection de fraude' },
-  { id: 'notifications', label: 'Notifications', icon: '🔔', description: 'Personnalisez vos préférences de notification' },
-  { id: 'system', label: 'Système', icon: '⚙️', description: 'Configuration générale du système' },
-  { id: 'api', label: 'API', icon: '🔗', description: 'Paramètres d\'intégration et de connectivité' },
-  { id: 'ml', label: 'IA', icon: '🧠', description: 'Configuration du modèle d\'intelligence artificielle' }
-]
+// Notification settings
+const emailNotifications = ref(true)
+const smsNotifications = ref(false)
+const pushNotifications = ref(true)
+const notificationFrequency = ref('realtime')
 
-const settings = reactive<Settings>({
-  security: {
-    twoFactorAuth: true,
-    autoLock: 15,
-    maxAttempts: 5
-  },
-  fraudDetection: {
-    highRiskThreshold: 0.85,
-    maxAmount: 1000000,
-    realTimeAnalysis: true
-  },
-  notifications: {
-    email: true,
-    push: true,
-    reportFrequency: 'daily'
-  },
-  system: {
-    dataRetention: 90,
-    maintenanceMode: false,
-    logLevel: 'info'
-  },
-  api: {
-    baseUrl: 'https://api.fraudguard.com',
-    timeout: 30,
-    autoRetry: true
-  },
-  ml: {
-    modelVersion: 'v1.1',
-    confidenceThreshold: 0.8,
-    adaptiveLearning: true
-  }
-})
+// Security settings
+const sessionTimeout = ref('30')
+const twoFactorAuth = ref(false)
 
-const getCurrentSection = () => {
-  return sections.find(s => s.id === activeSection.value) || sections[0]
-}
+// Fraud rules settings
+const transactionLimit = ref(500000)
+const transactionVelocity = ref(5)
+const geolocationCheck = ref(true)
+const ipCheck = ref(true)
+const deviceFingerprinting = ref(true)
 
-const updateSetting = (category: string, key: string, value: any) => {
-  console.log(`Updating ${category}.${key} to:`, value)
-  showToastMessage('Paramètre mis à jour', 'success')
-}
-
-const saveSettings = () => {
-  showToastMessage('Paramètres sauvegardés avec succès!', 'success')
-  console.log('Saving settings:', settings)
-}
-
-const refreshSettings = () => {
-  showToastMessage('Paramètres actualisés', 'info')
-}
-
-const formatAmount = (amount: number) => {
-  return new Intl.NumberFormat('fr-FR').format(amount)
-}
-
-const updateAmount = (value: string) => {
-  const numericValue = parseInt(value.replace(/\s/g, ''))
-  if (!isNaN(numericValue)) {
-    settings.fraudDetection.maxAmount = numericValue
-    updateSetting('fraudDetection', 'maxAmount', numericValue)
-  }
-}
-
-const incrementAttempts = () => {
-  if (settings.security.maxAttempts < 10) {
-    settings.security.maxAttempts++
-    updateSetting('security', 'maxAttempts', settings.security.maxAttempts)
-  }
-}
-
-const decrementAttempts = () => {
-  if (settings.security.maxAttempts > 3) {
-    settings.security.maxAttempts--
-    updateSetting('security', 'maxAttempts', settings.security.maxAttempts)
-  }
-}
-
-const incrementRetention = () => {
-  if (settings.system.dataRetention < 365) {
-    settings.system.dataRetention += 30
-    updateSetting('system', 'dataRetention', settings.system.dataRetention)
-  }
-}
-
-const decrementRetention = () => {
-  if (settings.system.dataRetention > 30) {
-    settings.system.dataRetention -= 30
-    updateSetting('system', 'dataRetention', settings.system.dataRetention)
-  }
-}
-
-const incrementTimeout = () => {
-  if (settings.api.timeout < 60) {
-    settings.api.timeout += 5
-    updateSetting('api', 'timeout', settings.api.timeout)
-  }
-}
-
-const decrementTimeout = () => {
-  if (settings.api.timeout > 5) {
-    settings.api.timeout -= 5
-    updateSetting('api', 'timeout', settings.api.timeout)
-  }
-}
-
-const showToastMessage = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
-  toastMessage.value = message
-  toastType.value = type
-  toastIcon.value = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️'
-  showToast.value = true
-  setTimeout(() => {
-    showToast.value = false
-  }, 3000)
+const toggleSidebar = () => {
+  isSidebarCollapsed.value = !isSidebarCollapsed.value
 }
 </script>
 
 <style scoped>
-.settings-container {
+.settings-page {
   display: flex;
   min-height: 100vh;
-  background: #f8fafc;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #f8fafc;
 }
 
-/* Sidebar */
+.burger-menu {
+  position: fixed;
+  top: 1rem;
+  left: 15rem;
+  z-index: 1001;
+  width: 40px;
+  height: 40px;
+  background-color: #1e40af;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: white;
+}
+
+.burger-menu svg {
+  width: 24px;
+  height: 24px;
+}
+
 .sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #1e3a8a 0%, #1e40af 100%);
-  color: white;
-  padding: 2rem 0;
+  background-color: #1e40af;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
   position: fixed;
   height: 100vh;
-  overflow-y: auto;
-  z-index: 100;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.sidebar-collapsed {
+  width: 80px;
 }
 
 .sidebar-header {
-  padding: 0 2rem 2rem;
+  padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 2rem;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.70rem;
 }
 
-.logo-icon {
-  font-size: 2rem;
+.shield-icon {
+  width: 50px;
+  height: 49px;
 }
 
-.logo h2 {
+.logo-text {
   font-size: 1.5rem;
-  font-weight: 700;
-  margin: 0;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
-.sidebar-nav {
-  padding: 0 1rem;
+.nav-menu {
+  flex: 1;
+  padding: 1rem 0;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
   gap: 1rem;
-  width: 100%;
-  padding: 1rem 1rem;
-  background: none;
-  border: none;
+  padding: 1rem 1.5rem;
   color: rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  border-radius: 12px;
-  margin-bottom: 0.5rem;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
-  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 1rem;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background-color: rgba(255, 255, 255, 0.1);
   color: white;
-  transform: translateX(4px);
 }
 
 .nav-item.active {
-  background: rgba(255, 255, 255, 0.15);
+  background-color: rgba(255, 255, 255, 0.15);
   color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-right: 3px solid white;
 }
 
 .nav-icon {
-  font-size: 1.2rem;
-  width: 24px;
-  text-align: center;
+  width: 25px;
+  height: 25px;
+  stroke: currentColor;
+  min-width: 25px;
 }
 
-.nav-label {
-  flex: 1;
-  text-align: left;
+.nav-bottom {
+  padding: 1rem 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 
 .main-content {
-  flex: 1;
   margin-left: 280px;
   padding: 2rem;
-  max-width: calc(100vw - 280px);
+  width: calc(100% - 280px);
+  transition: all 0.3s ease;
 }
 
-.content-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+.main-content-expanded {
+  margin-left: 80px;
+  width: calc(100% - 80px);
+}
+
+.page-header {
   margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  color: white;
+  margin-bottom: 2rem;
 }
 
-.header-info h1 {
+.header-content h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: #1e293b;
-  margin: 0 0 0.5rem 0;
+  margin-bottom: 0.5rem;
 }
 
-.header-info p {
-  color: #64748b;
+.page-subtitle {
   font-size: 1rem;
-  margin: 0;
+  opacity: 0.9;
 }
 
-.header-actions {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.btn-icon {
-  width: 44px;
-  height: 44px;
-  border: 1px solid #e2e8f0;
+.settings-container {
   background: white;
   border-radius: 12px;
-  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.settings-tabs {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  font-size: 1.2rem;
+  flex-direction: column;
 }
 
-.btn-icon:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  transform: translateY(-1px);
+.tabs-header {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+  overflow-x: auto;
 }
 
-.btn-primary {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  color: white;
+.tab-button {
+  padding: 1rem 1.5rem;
+  background: none;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-}
-
-/* Settings Section */
-.settings-section {
-  animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.setting-group {
-  margin-bottom: 2rem;
-}
-
-.setting-group h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 1.5rem 0;
-}
-
-.settings-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-}
-
-.setting-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.setting-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-2px);
-}
-
-.setting-card.full-width {
-  grid-column: 1 / -1;
-}
-
-.setting-info h4 {
   font-size: 1rem;
+  color: #4b5563;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab-button:hover {
+  background-color: #f8fafc;
+}
+
+.tab-button.active {
+  color: #1e40af;
+  border-bottom: 2px solid #1e40af;
+  font-weight: 600;
+}
+
+.tab-pane {
+  padding: 2rem;
+}
+
+.tab-pane h2 {
+  font-size: 1.5rem;
   font-weight: 600;
   color: #1e293b;
-  margin: 0 0 0.5rem 0;
+  margin-bottom: 1.5rem;
 }
 
-.setting-info p {
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-input, .form-select {
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-input:focus, .form-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.input-unit {
   font-size: 0.875rem;
-  color: #64748b;
-  margin: 0;
-  line-height: 1.5;
+  color: #6b7280;
+  margin-top: 0.25rem;
 }
 
-.setting-control {
-  margin-top: 1rem;
-}
-
-/* Modern Controls */
-.modern-switch {
+.toggle-switch {
   position: relative;
   display: inline-block;
-  width: 52px;
-  height: 28px;
+  width: 48px;
+  height: 24px;
 }
 
-.modern-switch input {
+.toggle-input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.switch-slider {
+.toggle-label {
   position: absolute;
   cursor: pointer;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: #cbd5e1;
-  border-radius: 28px;
-  transition: all 0.3s ease;
+  background-color: #d1d5db;
+  transition: .4s;
+  border-radius: 34px;
 }
 
-.switch-slider:before {
+.toggle-label:before {
   position: absolute;
   content: "";
-  height: 20px;
-  width: 20px;
+  height: 16px;
+  width: 16px;
   left: 4px;
   bottom: 4px;
-  background: white;
+  background-color: white;
+  transition: .4s;
   border-radius: 50%;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.modern-switch input:checked + .switch-slider {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+.toggle-input:checked + .toggle-label {
+  background-color: #3b82f6;
 }
 
-.modern-switch input:checked + .switch-slider:before {
+.toggle-input:checked + .toggle-label:before {
   transform: translateX(24px);
 }
 
-.modern-select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  background: white;
-  font-size: 0.95rem;
-  color: #1e293b;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.modern-select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.modern-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  background: white;
-  font-size: 0.95rem;
-  color: #1e293b;
-  transition: all 0.3s ease;
-}
-
-.modern-input:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-.number-input {
-  display: flex;
-  align-items: center;
-  border: 2px solid #e2e8f0;
-  border-radius: 12px;
-  background: white;
-  overflow: hidden;
-}
-
-.number-btn {
-  width: 40px;
-  height: 40px;
-  border: none;
-  background: #f8fafc;
-  color: #64748b;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.number-btn:hover {
-  background: #e2e8f0;
-  color: #1e293b;
-}
-
-.number-field {
-  flex: 1;
-  border: none;
-  padding: 0.75rem;
-  text-align: center;
-  font-size: 0.95rem;
-  color: #1e293b;
-  background: white;
-}
-
-.number-field:focus {
-  outline: none;
-}
-
-.amount-input {
-  position: relative;
-}
-
-.currency {
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #64748b;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.slider-group {
-  width: 100%;
-}
-
-.modern-slider {
-  width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: #e2e8f0;
-  outline: none;
-  margin-bottom: 1rem;
-  cursor: pointer;
-}
-
-.modern-slider::-webkit-slider-thumb {
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
-  transition: all 0.3s ease;
-}
-
-.modern-slider::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.6);
-}
-
-.slider-labels {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 0.875rem;
-  color: #64748b;
-}
-
-.current-value {
-  font-weight: 600;
-  color: #3b82f6;
-  background: #eff6ff;
-  padding: 0.25rem 0.75rem;
-  border-radius: 20px;
-}
-
-/* Toast */
-.toast-container {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  z-index: 1000;
-}
-
-.toast {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
-  border-radius: 12px;
+.save-button {
+  background-color: #1e40af;
   color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
   font-weight: 500;
-  transform: translateX(100%);
-  transition: all 0.3s ease;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  align-self: flex-start;
+  margin-top: 1rem;
 }
 
-.toast.show {
-  transform: translateX(0);
-}
-
-.toast.success {
-  background: linear-gradient(135deg, #10b981, #059669);
-}
-
-.toast.error {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
-}
-
-.toast.info {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
-}
-
-.toast-icon {
-  font-size: 1.2rem;
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 240px;
-  }
-  
-  .main-content {
-    margin-left: 240px;
-    max-width: calc(100vw - 240px);
-  }
+.save-button:hover {
+  background-color: #1e3a8a;
 }
 
 @media (max-width: 768px) {
-  .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-  
   .main-content {
     margin-left: 0;
-    max-width: 100vw;
+    width: 100%;
     padding: 1rem;
   }
-  
-  .content-header {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: stretch;
-  }
-  
-  .header-actions {
-    justify-content: flex-end;
-  }
-  
-  .settings-row {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-  
-  .toast-container {
-    bottom: 1rem;
-    right: 1rem;
-    left: 1rem;
-  }
-  
-  .toast {
-    transform: translateY(100%);
-  }
-  
-  .toast.show {
-    transform: translateY(0);
-  }
-}
 
-@media (max-width: 480px) {
-  .main-content {
-    padding: 0.5rem;
+  .main-content-expanded {
+    margin-left: 0;
+    width: 100%;
   }
-  
-  .setting-card {
-    padding: 1rem;
+
+  .settings-form {
+    max-width: 100%;
   }
-  
-  .content-header {
-    margin-bottom: 1rem;
-    padding-bottom: 1rem;
+
+  .tabs-header {
+    flex-direction: column;
   }
-  
-  .header-info h1 {
-    font-size: 1.5rem;
+
+  .tab-button {
+    text-align: left;
+    padding: 0.75rem 1.5rem;
   }
 }
 </style>

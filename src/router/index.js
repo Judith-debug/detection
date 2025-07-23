@@ -1,16 +1,35 @@
+import { name } from 'normalize-range';
 import { createRouter, createWebHistory } from 'vue-router';
-import Register from '@/views/Compte.vue';
-import Login from '@/views/Login.vue';
-import Dashboard from '@/views/Dashboard.vue';
-import Compte from '@/views/Compte.vue';
-import Acceuil from '@/Acceuil.vue';
+
 
 const routes = [
   {
   path: '/Compte',
   name: 'Compte',
   component: () => import('@/views/Compte.vue')
-}
+},
+{
+  path:'',
+  component: () => import('@/views/Layout.vue'),
+  children: [
+     {
+        path:'/dashboard',
+        name:'dashboard',
+          component: () => import('@/views/Dashboard.vue')
+      },
+      {
+        path:'/transaction',
+        name:'transaction',
+          component: () => import('@/views/Transaction.vue')
+      }
+    ]
+},
+{
+  path:'/login',
+  name:'login',
+    component: () => import('@/views/Login.vue')
+},
+
 
 
  
