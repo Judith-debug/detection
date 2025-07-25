@@ -1,3 +1,4 @@
+import Parametres from '@/views/Parametres.vue';
 import { name } from 'normalize-range';
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -21,6 +22,21 @@ const routes = [
         path:'/transaction',
         name:'transaction',
           component: () => import('@/views/Transaction.vue')
+      },
+      {
+        path:'/rapports',
+        name:'rapports',
+          component: () => import('@/views/Rapports.vue')
+      },
+      {
+        path:'/alertes',
+        name:'alertes',
+          component: () => import('@/views/Alertes.vue')
+      },
+      {
+        path: '/parametres',
+        name: 'parametres',
+        component: () => import ('@/views/Parametres.vue')
       }
     ]
 },

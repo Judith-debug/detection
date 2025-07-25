@@ -134,49 +134,7 @@ const toggleSidebar = () => {
   font-family: sans-serif;
 }
 
-.burger-menu {
-  position: fixed;
-  top: 1.6rem;
-  left: 15rem;
-  z-index: 1001;
-  width: 40px;
-  height: 40px;
-  background-color: #1e40af;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: white;
-}
 
-.burger-menu svg {
-  width: 24px;
-  height: 24px;
-}
-
-.sidebar {
-  width: 280px;
-  background-color: #1e40af;
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  height: 100vh;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
-}
-
-.sidebar-collapsed {
-  width: 80px;
-}
-
-.sidebar-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 .logo {
   display: flex;
@@ -193,33 +151,6 @@ const toggleSidebar = () => {
   font-size: 1.25rem;
   font-weight: 600;
   white-space: nowrap;
-}
-
-.nav-menu {
-  flex: 1;
-  padding: 1rem 0;
-}
-
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
-  transition: all 0.2s ease;
-  font-size: 1rem;
-}
-
-.nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: white;
-}
-
-.nav-item.active {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: white;
-  border-right: 3px solid white;
 }
 
 .nav-icon {
