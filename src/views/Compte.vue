@@ -5,246 +5,190 @@
       <div class="decoration-circle circle-2"></div>
       <div class="decoration-circle circle-3"></div>
     </div>
-    
     <div class="signup-card">
       <div class="header">
         <div class="logo">
-           
           <div class="logo-icon">
-            
             <svg class="shield-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L3 7V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V7L12 2Z" fill="white"/>
-            <path d="M9 12L11 14L15 10" stroke="#0F7CBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
+              <path d="M12 2L3 7V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V7L12 2Z" fill="white"/>
+              <path d="M9 12L11 14L15 10" stroke="#0F7CBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
           </div>
           <span>Fraud Stop</span>
         </div>
         <h1>Créer votre compte</h1>
-
       </div>
-
       <form @submit.prevent="handleSubmit" class="form">
         <div class="form-section">
-         
           <div class="form-row">
             <div class="form-group">
-              <label for="firstName">Prénom</label>
-              <input
-                id="firstName"
-                v-model="form.firstName"
-                type="text"
-                placeholder="Votre prénom"
-                :class="{ error: errors.firstName }"
-              >
-              <span v-if="errors.firstName" class="error-message">{{ errors.firstName }}</span>
+              <label for="prenom">Prénom</label>
+              <input id="prenom" v-model="form.prenom" type="text" placeholder="Votre prénom" :class="{ error: errors.prenom }">
+              <span v-if="errors.prenom" class="error-message">{{ errors.prenom }}</span>
             </div>
-            
             <div class="form-group">
-              <label for="lastName">Nom</label>
-              <input
-                id="lastName"
-                v-model="form.lastName"
-                type="text"
-                placeholder="Votre nom"
-                :class="{ error: errors.lastName }"
-              >
-              <span v-if="errors.lastName" class="error-message">{{ errors.lastName }}</span>
+              <label for="nom">Nom</label>
+              <input id="nom" v-model="form.nom" type="text" placeholder="Votre nom" :class="{ error: errors.nom }">
+              <span v-if="errors.nom" class="error-message">{{ errors.nom }}</span>
             </div>
           </div>
         </div>
-
         <div class="form-section">
-         
-          <div class="form-group">
-            <label for="organizationName">Nom de l'organisation</label>
-            <input
-              id="organizationName"
-              v-model="form.organizationName"
-              type="text"
-              placeholder="Nom de votre organisation"
-              :class="{ error: errors.organizationName }"
-            >
-            <span v-if="errors.organizationName" class="error-message">{{ errors.organizationName }}</span>
-          </div>
-
-          <div class="form-group">
-            <label for="organizationType">Type d'organisation</label>
-            <select
-              id="organizationType"
-              v-model="form.organizationType"
-              :class="{ error: errors.organizationType }"
-            >
-              <option value="">Sélectionner le type</option>
-              <option v-for="type in organizationTypes" :key="type.value" :value="type.value">
-                {{ type.label }}
-              </option>
-            </select>
-            <span v-if="errors.organizationType" class="error-message">{{ errors.organizationType }}</span>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="organisation">Nom de l'organisation</label>
+              <input id="organisation" v-model="form.organisation" type="text" placeholder="Nom de votre organisation" :class="{ error: errors.organisation }">
+              <span v-if="errors.organisation" class="error-message">{{ errors.organisation }}</span>
+            </div>
+            <div class="form-group">
+              <label for="organisationType">Type d'organisation</label>
+              <select id="organisationType" v-model="form.organisationType" :class="{ error: errors.organisationType }">
+                <option value="">Sélectionner le type</option>
+                <option v-for="type in organisationTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
+              </select>
+              <span v-if="errors.organisationType" class="error-message">{{ errors.organisationType }}</span>
+            </div>
           </div>
         </div>
-
         <div class="form-section">
-         
-          <div class="form-group">
-            <label for="email">Adresse email professionnelle</label>
-            <input
-              id="email"
-              v-model="form.email"
-              type="email"
-              placeholder="votre.email@organisation.com"
-              :class="{ error: errors.email }"
-            >
-            <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
-          </div>
-
-          <div class="form-group">
-            <label for="phone">Numéro de téléphone</label>
-            <input
-              id="phone"
-              v-model="form.phone"
-              type="tel"
-              placeholder="+225 XX XX XX XX XX"
-              :class="{ error: errors.phone }"
-            >
-            <span v-if="errors.phone" class="error-message">{{ errors.phone }}</span>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="email">Adresse email professionnelle</label>
+              <input id="email" v-model="form.email" type="email" placeholder="votre.email@organisation.com" :class="{ error: errors.email }">
+              <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
+            </div>
+            <div class="form-group">
+              <label for="phone">Numéro de téléphone</label>
+              <input id="phone" v-model="form.phone" type="tel" placeholder="+226 XX XX XX XX" :class="{ error: errors.phone }">
+              <span v-if="errors.phone" class="error-message">{{ errors.phone }}</span>
+            </div>
           </div>
         </div>
-
-       
-                  
-        <button
-          type="submit"
-          class="submit-btn"
-          :disabled="isLoading"
-        >
+        <button type="submit" class="submit-btn" :disabled="isLoading">
           <span v-if="isLoading" class="loading-spinner"></span>
           <svg v-if="!isLoading" viewBox="0 0 24 24" fill="none" class="btn-icon">
             <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
             <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
           </svg>
-          {{ isLoading ? 'Création en cours...' : 'Créer mon compte professionnel' }}
+          {{ isLoading ? 'Création en cours...' : 'Créer mon compte' }}
         </button>
       </form>
-
       <div class="footer">
-        <p>Vous avez déjà un compte ? <a href="#" class="link">Se connecter</a></p>
+        <p>
+    Vous avez déjà un compte ?
+    <router-link to="/login" class="link" >Se connecter</router-link>
+  </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+
+
+import { ref, reactive } from 'vue';
+import axios from 'axios';
 
 const form = reactive({
-  firstName: '',
-  lastName: '',
-  organizationName: '',
-  organizationType: '',
+  nom: '',
+  prenom: '',
+  organisation: '',
+  organisationType: '',
   email: '',
   phone: '',
-  password: '',
-  confirmPassword: '',
-  terms: false
-})
+});
 
 const errors = reactive({
-  firstName: '',
-  lastName: '',
-  organizationName: '',
-  organizationType: '',
+  nom: '',
+  prenom: '',
+  organisation: '',
+  organisationType: '',
   email: '',
   phone: '',
-  password: '',
-  confirmPassword: '',
-  terms: ''
-})
+});
 
-const isLoading = ref(false)
-const showPassword = ref(false)
-const showConfirmPassword = ref(false)
+const isLoading = ref(false);
 
-const organizationTypes = [
+const organisationTypes = [
   { value: 'operator', label: 'Opérateur Mobile Money' },
   { value: 'financial', label: 'Institution Financière' }
-]
+];
 
 const validateForm = () => {
-  // Reset errors
   Object.keys(errors).forEach(key => {
-    errors[key] = ''
-  })
+    errors[key] = '';
+  });
 
-  let isValid = true
+  let isValid = true;
 
-  if (!form.firstName.trim()) {
-    errors.firstName = 'Le prénom est requis'
-    isValid = false
+  if (!form.nom.trim()) {
+    errors.nom = 'Le nom est requis';
+    isValid = false;
   }
 
-  if (!form.lastName.trim()) {
-    errors.lastName = 'Le nom est requis'
-    isValid = false
+  if (!form.prenom.trim()) {
+    errors.prenom = 'Le prénom est requis';
+    isValid = false;
   }
 
-  if (!form.organizationName.trim()) {
-    errors.organizationName = 'Le nom de l\'organisation est requis'
-    isValid = false
+  if (!form.organisation.trim()) {
+    errors.organisation = 'Le nom de l\'organisation est requis';
+    isValid = false;
   }
 
-  if (!form.organizationType) {
-    errors.organizationType = 'Veuillez sélectionner le type d\'organisation'
-    isValid = false
+  if (!form.organisationType) {
+    errors.organisationType = 'Veuillez sélectionner le type d\'organisation';
+    isValid = false;
   }
 
   if (!form.email.trim()) {
-    errors.email = 'L\'email est requis'
-    isValid = false
+    errors.email = 'L\'email est requis';
+    isValid = false;
   } else if (!/\S+@\S+\.\S+/.test(form.email)) {
-    errors.email = 'Format d\'email invalide'
-    isValid = false
+    errors.email = 'Format d\'email invalide';
+    isValid = false;
   }
 
   if (!form.phone.trim()) {
-    errors.phone = 'Le numéro de téléphone est requis'
-    isValid = false
+    errors.phone = 'Le numéro de téléphone est requis';
+    isValid = false;
   } else if (!/^\+?[0-9]{8,15}$/.test(form.phone.replace(/\s/g, ''))) {
-    errors.phone = 'Numéro de téléphone invalide'
-    isValid = false
+    errors.phone = 'Numéro de téléphone invalide';
+    isValid = false;
   }
 
-  if (!form.password) {
-    errors.password = 'Le mot de passe est requis'
-    isValid = false
-  } else if (form.password.length < 8) {
-    errors.password = 'Le mot de passe doit contenir au moins 8 caractères'
-    isValid = false
-  }
-
-  if (form.password !== form.confirmPassword) {
-    errors.confirmPassword = 'Les mots de passe ne correspondent pas'
-    isValid = false
-  }
-
-  if (!form.terms) {
-    errors.terms = 'Vous devez accepter les conditions d\'utilisation'
-    isValid = false
-  }
-
-  return isValid
-}
+  return isValid;
+};
 
 const handleSubmit = async () => {
-  if (!validateForm()) return
+  console.log("Bouton appuyé");
+  if (!validateForm()) return;
+  isLoading.value = true;
+  console.log(form);
 
-  isLoading.value = true
+  try {
+    const response = await axios.post('http://localhost:3000/api/auth/register', {
+      nom: form.nom,
+      prenom: form.prenom,
+      organisation: form.organisation,
+      organisationType: form.organisationType,
+      email: form.email,
+      phone: form.phone
+    });
+    console.log('Réponse API:', response.data);
+    alert('Compte créé avec succès !');
+  } catch (error) {
+    console.error('Erreur API :', error);
+    if (error.response && error.response.data && error.response.data.message) {
+      alert('Erreur : ' + error.response.data.message);
+    } else {
+      alert('Une erreur est survenue. Veuillez réessayer.');
+    }
+  } finally {
+    isLoading.value = false;
+  }
   
-  // Simulation d'appel API
-  setTimeout(() => {
-    isLoading.value = false
-    alert('Compte créé avec succès!')
-  }, 2000)
-}
+};
 </script>
 
 <style scoped>
@@ -253,13 +197,11 @@ const handleSubmit = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
+  padding: 20px;
   background: hsl(226, 82%, 32%);
   position: relative;
   overflow: hidden;
 }
-
-
 
 .decoration-circle {
   position: absolute;
@@ -284,8 +226,6 @@ const handleSubmit = async () => {
   animation-delay: 2s;
 }
 
-
-
 @keyframes float {
   0%, 100% {
     transform: translateY(0px) rotate(0deg);
@@ -300,14 +240,10 @@ const handleSubmit = async () => {
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 32px;
-  padding: 10px;
-  width: 50%;
+  padding: 20px;
+  width: 90%;
   max-width: 700px;
-  margin: 5px;
-  box-shadow: 
-    0 32px 64px -12px rgba(0, 0, 0, 0.25),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   position: relative;
   z-index: 1;
   animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -340,7 +276,7 @@ const handleSubmit = async () => {
 .logo-icon {
   width: 50px;
   height: 46px;
-  background:  #60a5fa;
+  background: #60a5fa;
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -355,13 +291,13 @@ const handleSubmit = async () => {
 }
 
 .logo span {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 800;
-  background:  #60a5fa;
+  background: #60a5fa;
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .header h1 {
@@ -373,67 +309,42 @@ const handleSubmit = async () => {
   letter-spacing: -0.02em;
 }
 
-.header p {
-  font-size: 20px;
-  color: #64748b;
-  line-height: 1.6;
-  max-width: 500px;
-  margin: 0 auto;
-}
-
 .form {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.form-section {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-.section-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: #1e293b;
-  margin-bottom: 4px;
+.form-section {
   display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-title::before {
-  content: '';
-  width: 4px;
-  height: 20px;
-  background:  #3b82f6 ;
-  border-radius: 2px;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 20px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
+  flex: 1;
+  margin: 1%;
+  
 }
 
 .form-group label {
   font-size: 15px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 4px;
+  font-weight: 550;
+  color: #282e36;
 }
 
 .form-group input,
 .form-group select {
-  padding: 16px 20px;
-  border: 2px solid #e2e8f0;
+  padding: 16px;
+  border: 1px solid #9e9e9e;
   border-radius: 16px;
   font-size: 16px;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -445,9 +356,7 @@ const handleSubmit = async () => {
 .form-group select:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 
-    0 0 0 4px rgba(59, 130, 246, 0.1),
-    0 8px 25px -5px rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
   transform: translateY(-2px);
   background: white;
 }
@@ -465,114 +374,55 @@ const handleSubmit = async () => {
 
 
 
-.checkbox-group {
-  margin-top: 8px;
-}
-
-.checkbox-label {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  cursor: pointer;
-  font-size: 15px;
-  line-height: 1.6;
-  color: #374151;
-}
-
-.checkbox {
-  appearance: none;
-  width: 24px;
-  height: 24px;
-  border: 2px solid #cbd5e1;
-  border-radius: 6px;
-  position: relative;
-  flex-shrink: 0;
-  margin-top: 2px;
-  transition: all 0.2s ease;
-}
-
-
-
-
-
-
-
-.submit-btn {
-  background: #3b82f6 ;
-  color: white;
-  padding: 20px 32px;
-  border: none;
-  border-radius: 16px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  margin-top: 16px;
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
- 
-}
-
-.submit-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.submit-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px rgba(59, 130, 246, 0.4);
-}
-
-.submit-btn:hover:not(:disabled)::before {
-  left: 100%;
-}
-
-.submit-btn:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.loading-spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid white;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
+.submit-btn {
+  background: #3b82f6;
+  color: white;
+  padding: 18px 20px;
+  margin: 15px auto;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px; 
+}
+
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4); /* Ajustement de l'ombre pour un effet plus subtil */
+}
+
+.submit-btn:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+.btn-icon {
+  width: 16px; /* Diminuer la largeur de l'icône */
+  height: 16px; /* Diminuer la hauteur de l'icône */
+  
+}
+
 
 .footer {
   text-align: center;
-  margin-top: 45px;
-  padding-top: 32px;
   border-top: 1px solid #e2e8f0;
+  margin-top: 20px;
 }
 
 .footer p {
   color: #64748b;
   font-size: 16px;
+  margin-top: 20px;
 }
 
 .link {
@@ -604,51 +454,31 @@ const handleSubmit = async () => {
 
 @media (max-width: 768px) {
   .signup-container {
-    padding: 20px 16px;
+    padding: 15px;
   }
-  
+
   .signup-card {
-    padding: 32px 24px;
-    border-radius: 24px;
+    width: 95%;
+    padding: 15px;
   }
-  
+
   .form-row {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  
-  .header h1 {
-    font-size: 28px;
-  }
-  
-  .header p {
-    font-size: 16px;
-  }
-  
-  .logo span {
-    font-size: 28px;
-  }
-  
-  .section-title {
-    font-size: 18px;
+    flex-direction: column;
+    gap: 15px;
   }
 }
 
 @media (max-width: 480px) {
-  .signup-card {
-    padding: 24px 20px;
-  }
-  
   .header h1 {
     font-size: 24px;
   }
-  
+
   .logo span {
-    font-size: 24px;
+    font-size: 20px;
   }
-  
+
   .submit-btn {
-    padding: 18px 24px;
+    padding: 14px;
     font-size: 16px;
   }
 }

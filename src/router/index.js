@@ -37,6 +37,12 @@ const routes = [
         path: '/parametres',
         name: 'parametres',
         component: () => import ('@/views/Parametres.vue')
+      },
+
+      {
+        path: '/login',
+        name: 'login',
+        component: () => import ('@/views/Login.vue')
       }
     ]
 },
