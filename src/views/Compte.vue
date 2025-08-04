@@ -5,14 +5,15 @@
       <div class="decoration-circle circle-2"></div>
       <div class="decoration-circle circle-3"></div>
     </div>
+    <nav class="sidebar" :class="{ 'sidebar-collapsed': isSidebarCollapsed }"></nav>
     <div class="signup-card">
       <div class="header">
         <div class="logo">
           <div class="logo-icon">
             <svg class="shield-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L3 7V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V7L12 2Z" fill="white"/>
-              <path d="M9 12L11 14L15 10" stroke="#0F7CBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <path d="M12 2L3 7V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V7L12 2Z" fill="white"/>
+            <path d="M9 12L11 14L15 10" stroke="#0F7CBC" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
           </div>
           <span>Fraud Stop</span>
         </div>
@@ -23,12 +24,12 @@
           <div class="form-row">
             <div class="form-group">
               <label for="prenom">Prénom</label>
-              <input id="prenom" v-model="form.prenom" type="text" placeholder="Votre prénom" :class="{ error: errors.prenom }">
+              <input id="prenom" v-model="form.prenom" type="text" placeholder="Votre prénom" :class="{ 'error': errors.prenom }">
               <span v-if="errors.prenom" class="error-message">{{ errors.prenom }}</span>
             </div>
             <div class="form-group">
               <label for="nom">Nom</label>
-              <input id="nom" v-model="form.nom" type="text" placeholder="Votre nom" :class="{ error: errors.nom }">
+              <input id="nom" v-model="form.nom" type="text" placeholder="Votre nom" :class="{ 'error': errors.nom }">
               <span v-if="errors.nom" class="error-message">{{ errors.nom }}</span>
             </div>
           </div>
@@ -37,12 +38,12 @@
           <div class="form-row">
             <div class="form-group">
               <label for="organisation">Nom de l'organisation</label>
-              <input id="organisation" v-model="form.organisation" type="text" placeholder="Nom de votre organisation" :class="{ error: errors.organisation }">
+              <input id="organisation" v-model="form.organisation" type="text" placeholder="Nom de votre organisation" :class="{ 'error': errors.organisation }">
               <span v-if="errors.organisation" class="error-message">{{ errors.organisation }}</span>
             </div>
             <div class="form-group">
               <label for="organisationType">Type d'organisation</label>
-              <select id="organisationType" v-model="form.organisationType" :class="{ error: errors.organisationType }">
+              <select id="organisationType" v-model="form.organisationType" :class="{ 'error': errors.organisationType }">
                 <option value="">Sélectionner le type</option>
                 <option v-for="type in organisationTypes" :key="type.value" :value="type.value">{{ type.label }}</option>
               </select>
@@ -54,40 +55,48 @@
           <div class="form-row">
             <div class="form-group">
               <label for="email">Adresse email professionnelle</label>
-              <input id="email" v-model="form.email" type="email" placeholder="votre.email@organisation.com" :class="{ error: errors.email }">
+              <input id="email" v-model="form.email" type="email" placeholder="votre.email@organisation.com" :class="{ 'error': errors.email }">
               <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
             </div>
             <div class="form-group">
               <label for="phone">Numéro de téléphone</label>
-              <input id="phone" v-model="form.phone" type="tel" placeholder="+226 XX XX XX XX" :class="{ error: errors.phone }">
+              <input id="phone" v-model="form.phone" type="tel" placeholder="+226 XX XX XX XX" :class="{ 'error': errors.phone }">
               <span v-if="errors.phone" class="error-message">{{ errors.phone }}</span>
             </div>
           </div>
         </div>
+        
         <button type="submit" class="submit-btn" :disabled="isLoading">
+          
           <span v-if="isLoading" class="loading-spinner"></span>
           <svg v-if="!isLoading" viewBox="0 0 24 24" fill="none" class="btn-icon">
             <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
             <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
           </svg>
           {{ isLoading ? 'Création en cours...' : 'Créer mon compte' }}
+          
         </button>
+        
       </form>
       <div class="footer">
         <p>
-    Vous avez déjà un compte ?
-    <router-link to="/login" class="link" >Se connecter</router-link>
-  </p>
+          Vous avez déjà un compte ?
+          <router-link :to="{ name: 'login'}" class="link">
+            <span>Se connecter</span>
+          </router-link>
+        </p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-
-
 import { ref, reactive } from 'vue';
 import axios from 'axios';
+
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const form = reactive({
   nom: '',
@@ -108,6 +117,7 @@ const errors = reactive({
 });
 
 const isLoading = ref(false);
+const isSidebarCollapsed = ref(false);
 
 const organisationTypes = [
   { value: 'operator', label: 'Opérateur Mobile Money' },
@@ -163,6 +173,7 @@ const validateForm = () => {
 const handleSubmit = async () => {
   console.log("Bouton appuyé");
   if (!validateForm()) return;
+
   isLoading.value = true;
   console.log(form);
 
@@ -175,8 +186,10 @@ const handleSubmit = async () => {
       email: form.email,
       phone: form.phone
     });
+
     console.log('Réponse API:', response.data);
     alert('Compte créé avec succès !');
+    router.push({ name: 'layout'});
   } catch (error) {
     console.error('Erreur API :', error);
     if (error.response && error.response.data && error.response.data.message) {
@@ -184,10 +197,11 @@ const handleSubmit = async () => {
     } else {
       alert('Une erreur est survenue. Veuillez réessayer.');
     }
+
+   
   } finally {
     isLoading.value = false;
   }
-  
 };
 </script>
 
@@ -332,7 +346,6 @@ const handleSubmit = async () => {
   gap: 12px;
   flex: 1;
   margin: 1%;
-  
 }
 
 .form-group label {
@@ -343,7 +356,7 @@ const handleSubmit = async () => {
 
 .form-group input,
 .form-group select {
-  padding: 16px;
+  padding: 15px;
   border: 1px solid #9e9e9e;
   border-radius: 16px;
   font-size: 16px;
@@ -371,14 +384,6 @@ const handleSubmit = async () => {
   color: #94a3b8;
 }
 
-
-
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
 .submit-btn {
   background: #3b82f6;
   color: white;
@@ -393,25 +398,23 @@ const handleSubmit = async () => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 15px; 
+  gap: 15px;
 }
-
 
 .submit-btn:hover:not(:disabled) {
   transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4); /* Ajustement de l'ombre pour un effet plus subtil */
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
 }
 
 .submit-btn:disabled {
   opacity: 0.8;
   cursor: not-allowed;
 }
-.btn-icon {
-  width: 16px; /* Diminuer la largeur de l'icône */
-  height: 16px; /* Diminuer la hauteur de l'icône */
-  
-}
 
+.btn-icon {
+  width: 16px;
+  height: 16px;
+}
 
 .footer {
   text-align: center;

@@ -7,22 +7,8 @@
           <h1 class="page-title">Centre d'Alertes</h1>
           <p class="page-subtitle">Surveillance en temps réel des activités suspectes</p>
         </div>
-        <div class="header-actions">
-          <button class="btn-secondary">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 22C13.1046 22 14 21.1046 14 20H10C10 21.1046 10.8954 22 12 22Z" stroke="currentColor" stroke-width="2"/>
-              <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            Configurer
-          </button>
-          <button class="btn-primary">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-              <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-            </svg>
-            Temps réel
-          </button>
-        </div>
+       
+      
       </div>
 
       <div class="alert-stats">

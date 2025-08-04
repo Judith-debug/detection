@@ -33,17 +33,14 @@
                 </div>
                 <div class="form-group">
                   <label for="language">Langue</label>
-                  <select id="language" v-model="language" class="form-select">
-                    <option value="fr">Français</option>
-                    <option value="en">Anglais</option>
-                  </select>
+                 
                 </div>
                 <div class="form-group">
                   <label for="timezone">Fuseau horaire</label>
                   <select id="timezone" v-model="timezone" class="form-select">
-                    <option value="GMT+1">GMT+1 (Africa/Abidjan)</option>
+                    <option value="GMT+1">GMT+1 (Africa/Ouagadougou)</option>
                     <option value="GMT">GMT (Africa/Accra)</option>
-                    <option value="GMT+2">GMT+2 (Africa/Cairo)</option>
+                    <option value="GMT+2">GMT+2 (Africa/Abidjan)</option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -149,13 +146,7 @@
                     <label for="ip-check" class="toggle-label"></label>
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="device-fingerprinting">Device Fingerprinting</label>
-                  <div class="toggle-switch">
-                    <input type="checkbox" id="device-fingerprinting" v-model="deviceFingerprinting" class="toggle-input">
-                    <label for="device-fingerprinting" class="toggle-label"></label>
-                  </div>
-                </div>
+              
                 <button class="save-button">Enregistrer les modifications</button>
               </div>
             </div>

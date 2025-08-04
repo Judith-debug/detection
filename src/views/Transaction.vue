@@ -9,14 +9,7 @@
           <p class="page-subtitle">Surveillance et détection automatique de fraude</p>
         </div>
         <div class="header-actions">
-          <button class="btn-secondary" @click="exportTransactions">
-            <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            Exporter
-          </button>
+        
           <button class="btn-primary" @click="showFilters = !showFilters">
             <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M3 4C3 3.44772 3.44772 3 4 3H20C20.5523 3 21 3.44772 21 4V6C21 6.55228 20.5523 7 20 7H4C3.44772 7 3 6.55228 3 6V4Z" stroke="currentColor" stroke-width="2"/>
@@ -187,7 +180,7 @@
                 </td>
                 <td class="amount">
                   <span class="amount-value">{{ formatAmount(transaction.amount) }}</span>
-                  <span class="currency">FCFA</span>
+                  
                 </td>
                 <td class="type">
                   <span class="type-badge" :class="transaction.type">{{ formatType(transaction.type) }}</span>

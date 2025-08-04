@@ -56,13 +56,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+console.log("je suis dans login")
+
 const email = ref('')
 const password = ref('')
 
-const handleLogin = () => {
-  console.log('Login attempt:', { email: email.value, password: password.value })
-  // Logique de connexion ici
-}
+
 </script>
 
 <style scoped>
@@ -274,6 +273,9 @@ const handleLogin = () => {
 }
 </style>
 <script lang="ts">
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 export default {
   data() {
     return {
@@ -284,7 +286,7 @@ export default {
     };
   },
   methods: {
-    async loginUser() {
+    async handleLogin() {
       this.error = '';
       this.success = '';
 
@@ -302,6 +304,7 @@ export default {
 
         if (res.ok) {
           this.success = 'Connexion réussie !';
+          router.push({ name: 'layout' })
           // Stocke le token pour les futures requêtes
           localStorage.setItem('token', data.token);
 

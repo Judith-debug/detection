@@ -85,11 +85,11 @@
           </div>
 
           <div class="chart-card">
-            <h3 class="chart-title">Répartition par type de fraude</h3>
+            <h3 class="chart-title">Répartition par etat de fraude</h3>
             <div class="chart-container">
               <div class="pie-chart">
                 <svg viewBox="0 0 200 200" class="pie-svg">
-                  <!-- Segments du graphique en secteurs -->
+                
                   <circle cx="100" cy="100" r="80" fill="none" stroke="#0F7CBC" stroke-width="40" stroke-dasharray="125.6 251.2" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
                   <circle cx="100" cy="100" r="80" fill="none" stroke="#F59E0B" stroke-width="40" stroke-dasharray="94.2 282.6" stroke-dashoffset="-125.6" transform="rotate(-90 100 100)"/>
                   <circle cx="100" cy="100" r="80" fill="none" stroke="#EF4444" stroke-width="40" stroke-dasharray="62.8 314" stroke-dashoffset="-219.8" transform="rotate(-90 100 100)"/>
