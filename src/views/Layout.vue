@@ -47,6 +47,21 @@
           </svg>
           <span v-if="!isSidebarCollapsed">Rapports</span>
         </router-link>
+
+
+<router-link :to="{ name: 'userManagement' }" class="nav-item" :class="{ 'active-link': activeLink === 'userManagement' }" @click="setActiveLink('userManagement')">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M15 18H19C19.5304 18 20.0391 17.7893 20.4142 17.4142C20.7893 17.0391 21 16.5304 21 16V10C21 9.46957 20.7893 8.96086 20.4142 8.58579C20.0391 8.21071 19.5304 8 19 8H15C14.4696 8 13.9609 8.21071 13.5858 8.58579C13.2107 8.96086 13 9.46957 13 10V16C13 16.5304 13.2107 17.0391 13.5858 17.4142C13.9609 17.7893 14.4696 18 15 18Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M10 18H14C14.5304 18 15.0391 17.7893 15.4142 17.4142C15.7893 17.0391 16 16.5304 16 16V10C16 9.46957 15.7893 8.96086 15.4142 8.58579C15.0391 8.21071 14.5304 8 14 8H10C9.46957 8 8.96086 8.21071 8.58579 8.58579C8.21071 8.96086 8 9.46957 8 10V16C8 16.5304 8.21071 17.0391 8.58579 17.4142C8.96086 17.7893 9.46957 18 10 18Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5 18H9C9.53043 18 10.0391 17.7893 10.4142 17.4142C10.7893 17.0391 11 16.5304 11 16V7C11 6.46957 10.7893 5.96086 10.4142 5.58579C10.0391 5.21071 9.53043 5 9 5H5C4.46957 5 3.96086 5.21071 3.58579 5.58579C3.21071 5.96086 3 6.46957 3 7V16C3 16.5304 3.21071 17.0391 3.58579 17.4142C3.96086 17.7893 4.46957 18 5 18Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span v-if="!isSidebarCollapsed">Gestion des Utilisateurs</span>
+        </router-link>
+
+
+
+
+
         <router-link :to="{name: 'parametres'}" class="nav-item" :class="{ 'active-link': activeLink === 'parametres' }" @click="setActiveLink('parametres')">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
@@ -76,8 +91,7 @@
             </svg>
           </div>
           <div class="user-profile" @click="toggleUserInfo">
-            <div class="user-avatar">
-              <img src="c:\Users\ADMIN\Downloads\WhatsApp Image 2025-07-11 à 14.13.57_ae92db5a.jpg" alt="Judith OUEDRAOGO" />
+            <div class="user-avatar"> <img src="/src/assets/Capture.png" alt="Judith OUEDRAOGO" />
             </div>
             <span class="user-name">Judith OUEDRAOGO</span>
           </div>

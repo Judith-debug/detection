@@ -160,22 +160,22 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 const isSidebarCollapsed = ref(false)
-const isPushed = ref(false) // Nouvelle propriété pour contrôler la position de la page
+const isPushed = ref(false) 
 const activeTab = ref('general')
-// General settings
+
 const appName = ref('Fraud Stop')
 const language = ref('fr')
 const timezone = ref('GMT+1')
 const currency = ref('XOF')
-// Notification settings
+
 const emailNotifications = ref(true)
 const smsNotifications = ref(false)
 const pushNotifications = ref(true)
 const notificationFrequency = ref('realtime')
-// Security settings
+
 const sessionTimeout = ref('30')
 const twoFactorAuth = ref(false)
-// Fraud rules settings
+
 const transactionLimit = ref(500000)
 const transactionVelocity = ref(5)
 const geolocationCheck = ref(true)
