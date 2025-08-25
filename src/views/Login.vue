@@ -58,6 +58,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios'; // Assurez-vous d'installer axios avec `npm install axios`
+
 const router = useRouter();
 const email = ref('');
 const password = ref('');
@@ -65,27 +67,45 @@ const error = ref(false);
 const emailError = ref('');
 const passwordError = ref('');
 
-const handleLogin = () => {
+
+const handleLogin = async () => {
   emailError.value = '';
   passwordError.value = '';
+  error.value = false;
 
-  if (email.value !== 'admindetection@gmail.com') {
-    emailError.value = 'Email incorrect';
-    error.value = true;
+  // 1. Vérification des identifiants admin par défaut
+  if (email.value === 'admindetection@gmail.com' && password.value === 'admin123') {
+    localStorage.setItem('token', 'fake-admin-token'); // Simule un token
+    router.push({ name: 'layout' });
     return;
   }
 
-  if (password.value !== 'admin123') {
-    passwordError.value = 'Mot de passe incorrect';
-    error.value = true;
-    return;
-  }
+  // 2. Sinon, appel à l'API pour vérifier en base de données
+  try {
+    const response = await axios.post('http://votre-backend/api/login', {
+      email: email.value,
+      password: password.value,
+    });
 
-  // Si tout est correct
-  router.push({ name: 'layout' });
-  localStorage.setItem('token', 'dummyToken'); // Vous pouvez remplacer cela par un vrai token si nécessaire
+    if (response.data.success) {
+      localStorage.setItem('token', response.data.token);
+      router.push({ name: 'layout' });
+    } else {
+      emailError.value = 'Email ou mot de passe incorrect';
+      passwordError.value = 'Email ou mot de passe incorrect';
+      error.value = true;
+    }
+  } catch (err) {
+    emailError.value = 'Email ou mot de passe incorrect';
+    error.value = true;
+  }
 };
+
+
+
 </script>
+
+
 
 <style scoped>
 .login-container {

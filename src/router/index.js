@@ -1,16 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Compte from '@/views/Compte.vue';
 import Login from '@/views/Login.vue';
+import LoginUser from '@/views/LoginUser.vue';
 
 const routes = [
   {
     path: '/',
-    redirect: '/login' // Redirige la racine vers la page de login
+    redirect: '/login' 
   },
   {
     path: '/login',
     name: 'login',
     component: Login
+  },
+  {
+    path: '/loginuser',
+    name: 'loginuser',
+    component: ()=> import('@/views/LoginUser.vue')
   },
   {
     path: '/layout',
@@ -46,7 +52,16 @@ const routes = [
         path: 'user-management',
         name: 'userManagement',
         component: () => import('@/views/UserManagement.vue')
+      },
+
+      {
+         path: 'role-management',
+         name: 'roleManagement',
+        component: () => import('@/views/RoleManagement.vue')
       }
+
+
+      
     ]
   }
 ];
@@ -57,12 +72,6 @@ const router = createRouter({
 });
 
 // Navigation guard pour rediriger vers la page de login
-router.beforeEach((to, from, next) => {
-  if (to.path !== '/login' && !to.path.startsWith('/layout')) {
-    next('/login');
-  } else {
-    next();
-  }
-});
+
 
 export default router;

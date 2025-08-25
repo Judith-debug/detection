@@ -23,18 +23,25 @@ import {
   Globe,
   FileText,
   X,
-  Check
+  Check,
+  Settings,
+  BarChart3,
+  AlertTriangle,
+  Home
 } from 'lucide-vue-next';
+import { details } from 'caniuse-lite/data/features';
 
 interface User {
   id: string;
   name: string;
   email: string;
+  phone: string;
   type: 'mobile_operator' | 'financial_institution';
   institution: string;
   status: 'active' | 'pending' | 'inactive';
   lastConnection: string;
-  avatar: string;
+  avatar: string | File;
+  permissions: string[];
 }
 
 interface OrganizationData {
@@ -42,8 +49,21 @@ interface OrganizationData {
   organizationType: 'mobile_operator' | 'financial_institution' | '';
   registrationNumber: string;
   email: string;
+  phone: string;
   website: string;
+  avatar: string | File;
+  avatarPreview: string;
+  permissions: string[];
 }
+
+// Onglets disponibles pour les utilisateurs (pas les admins)
+const availablePermissions = [
+  { key: 'dashboard', name: 'Dashboard', icon: Home, description: 'Accès au tableau de bord principal' },
+  { key: 'transactions', name: 'Transactions', icon: FileText, description: 'Gestion et consultation des transactions' },
+  { key: 'alerts', name: 'Alertes', icon: AlertTriangle, description: 'Gestion des alertes et notifications' },
+  { key: 'reports', name: 'Rapports', icon: BarChart3, description: 'Génération et consultation des rapports' },
+  { key: 'settings', name: 'Paramètres', icon: Settings, description: 'Configuration des paramètres utilisateur' }
+];
 
 const showModal = ref(false);
 const isLoading = ref(false);
@@ -61,7 +81,11 @@ const organizationData = reactive<OrganizationData>({
   organizationType: '',
   registrationNumber: '',
   email: '',
-  website: ''
+  phone: '',
+  website: '',
+  avatar: '',
+  avatarPreview: '',
+  permissions: []
 });
 
 const users = ref<User[]>([
@@ -69,41 +93,49 @@ const users = ref<User[]>([
     id: '1',
     name: 'Marie Kabore',
     email: 'marie.kabore@orange.ci',
+    phone: '+225 07 01 23 45 67',
     type: 'mobile_operator',
     institution: 'Orange Money',
     status: 'active',
     lastConnection: '15/01/2024',
-    avatar: 'MK'
+    avatar: 'https://via.placeholder.com/40/3b82f6/FFFFFF?text=MK',
+    permissions: ['dashboard', 'transactions', 'alerts', 'reports']
   },
   {
     id: '2',
     name: 'Jean Kouassi',
     email: 'jean.kouassi@mtn.ci',
+    phone: '+225 05 01 23 45 67',
     type: 'mobile_operator',
     institution: 'MTN Mobile Money',
     status: 'active',
     lastConnection: '14/01/2024',
-    avatar: 'JK'
+    avatar: 'https://via.placeholder.com/40/3b82f6/FFFFFF?text=JK',
+    permissions: ['dashboard', 'transactions', 'settings']
   },
   {
     id: '3',
     name: 'Fatou Diallo',
     email: 'fatou.diallo@ecobank.com',
+    phone: '+225 01 01 23 45 67',
     type: 'financial_institution',
     institution: 'Ecobank',
     status: 'pending',
     lastConnection: '12/01/2024',
-    avatar: 'FD'
+    avatar: 'https://via.placeholder.com/40/10b981/FFFFFF?text=FD',
+    permissions: ['dashboard', 'reports']
   },
   {
     id: '4',
     name: 'Ahmed Ben Ali',
     email: 'ahmed.benali@sgbci.com',
+    phone: '+225 03 01 23 45 67',
     type: 'financial_institution',
     institution: 'Société Générale',
     status: 'inactive',
     lastConnection: '10/01/2024',
-    avatar: 'AB'
+    avatar: 'https://via.placeholder.com/40/f59e0b/FFFFFF?text=AB',
+    permissions: ['dashboard']
   }
 ]);
 
@@ -117,18 +149,18 @@ const stats = computed(() => ({
 const isFormValid = computed(() => {
   return organizationData.organizationName &&
          organizationData.organizationType &&
-         organizationData.registrationNumber &&
-         organizationData.email;
+         organizationData.email &&
+         organizationData.phone &&
+         organizationData.permissions.length > 0;
 });
 
 const filteredUsers = computed(() => {
+  const query = (searchQuery.value ?? '').toLowerCase();
   return users.value.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                         user.institution.toLowerCase().includes(searchQuery.value.toLowerCase());
-    const matchesType = selectedType.value === 'all' || user.type === selectedType.value;
-    const matchesStatus = selectedStatus.value === 'all' || user.status === selectedStatus.value;
-    return matchesSearch && matchesType && matchesStatus;
+    const name = (user.name ?? '').toLowerCase();
+    const typeMatch = selectedType.value === 'all' || user.type === selectedType.value;
+    const statusMatch = selectedStatus.value === 'all' || user.status === selectedStatus.value;
+    return name.includes(query) && typeMatch && statusMatch;
   });
 });
 
@@ -146,29 +178,97 @@ const resetForm = () => {
   organizationData.organizationType = '';
   organizationData.registrationNumber = '';
   organizationData.email = '';
+  organizationData.phone = '';
   organizationData.website = '';
+  organizationData.avatar = '';
+  organizationData.avatarPreview = '';
+  organizationData.permissions = [];
 };
 
-const addOrganization = () => {
+const handleAvatarUpload = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    organizationData.avatar = file;
+    organizationData.avatarPreview = URL.createObjectURL(file);
+  }
+};
+
+const togglePermission = (permissionKey: string) => {
+  const index = organizationData.permissions.indexOf(permissionKey);
+  if (index > -1) {
+    organizationData.permissions.splice(index, 1);
+  } else {
+    organizationData.permissions.push(permissionKey);
+  }
+};
+
+const selectAllPermissions = () => {
+  if (organizationData.permissions.length === availablePermissions.length) {
+    organizationData.permissions = [];
+  } else {
+    organizationData.permissions = availablePermissions.map(p => p.key);
+  }
+};
+
+const addOrganization = async () => {
   if (!isFormValid.value) return;
-  const newUser: User = {
-    id: Date.now().toString(),
-    name: organizationData.organizationName,
-    email: organizationData.email,
-    type: organizationData.organizationType as 'mobile_operator' | 'financial_institution',
-    institution: organizationData.organizationName,
-    status: 'pending',
-    lastConnection: new Date().toLocaleDateString('fr-FR'),
-    avatar: organizationData.organizationName.split(' ').map(n => n[0]).join('').toUpperCase()
+
+  // Mapper les types de ton frontend vers ceux attendus par le backend
+   const typeMapping: Record<string, string> = {
+    "operateur_mobile": "mobile_operator",
+    "institution_financiere": "financial_institution"
   };
-  users.value.unshift(newUser);
-  closeModal();
+
+  const payload = {
+    organization_name: organizationData.organizationName,
+    email: organizationData.email,
+    phone: organizationData.phone,
+    organization_type: typeMapping[organizationData.organizationType] || organizationData.organizationType,
+    permissions: organizationData.permissions
+  };
+
+  try {
+    const response = await fetch("http://127.0.0.1:8000/register/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(JSON.stringify(errorData.detail || errorData));
+    }
+
+    const savedUser = await response.json();
+    console.log(savedUser)
+
+    users.value.unshift({
+      ...savedUser,
+      status: 'pending',
+      lastConnection: new Date().toLocaleDateString(),
+      avatar: organizationData.avatarPreview || '',
+      permissions: organizationData.permissions
+    });
+
+    closeModal();
+    notification.value = {
+      show: true,
+      message: `Organisation "${organizationData.organizationName}" ajoutée avec succès avec ${organizationData.permissions.length} permission(s) !`,
+      type: 'success'
+    };
+  } catch (error: any) {
+    console.error("Erreur :", error);
+    alert(`Échec : ${error.message}`);
+  }
 };
 
 const activateAccount = async (index: number) => {
   isLoading.value = true;
   try {
-    const response = await fetch('http://localhost:3000/activate', {
+    const response = await fetch('http://localhost:8000/activate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -177,6 +277,8 @@ const activateAccount = async (index: number) => {
         email: users.value[index].email,
       }),
     });
+    console.log(response.status);
+    
     if (response.ok) {
       users.value[index].status = 'active';
       notification.value = {
@@ -185,6 +287,7 @@ const activateAccount = async (index: number) => {
         type: 'success'
       };
     } else {
+      console.log(response);
       notification.value = {
         show: true,
         message: `Erreur lors de l'activation du compte.`,
@@ -192,6 +295,7 @@ const activateAccount = async (index: number) => {
       };
     }
   } catch (error) {
+
     console.error('Erreur:', error);
     notification.value = {
       show: true,
@@ -209,7 +313,7 @@ const activateAccount = async (index: number) => {
 const deactivateAccount = async (index: number) => {
   isLoading.value = true;
   try {
-    const response = await fetch('http://localhost:3000/deactivate', {
+    const response = await fetch('http://localhost:8000/deactivate', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -218,7 +322,6 @@ const deactivateAccount = async (index: number) => {
         email: users.value[index].email,
       }),
     });
-
     if (response.ok) {
       users.value[index].status = 'inactive';
       notification.value = {
@@ -270,6 +373,16 @@ const getTypeText = (type: string) => {
   return type === 'mobile_operator' ? 'Opérateur' : 'Institution';
 };
 
+const getPermissionIcon = (permissionKey: string) => {
+  const permission = availablePermissions.find(p => p.key === permissionKey);
+  return permission?.icon || Shield;
+};
+
+const getPermissionName = (permissionKey: string) => {
+  const permission = availablePermissions.find(p => p.key === permissionKey);
+  return permission?.name || permissionKey;
+};
+
 const closeNotification = () => {
   notification.value.show = false;
 };
@@ -277,7 +390,7 @@ const closeNotification = () => {
 
 <template>
   <div class="user-management">
-    <!-- Header -->
+   
     <div class="header">
       <div class="container">
         <div class="header-content">
@@ -331,7 +444,6 @@ const closeNotification = () => {
           </div>
         </div>
       </div>
-
       <div class="filters-section">
         <div class="search-bar">
           <Search :size="20" class="search-icon" />
@@ -361,7 +473,6 @@ const closeNotification = () => {
           </div>
         </div>
       </div>
-
       <div class="table-container">
         <div class="table-header">
           <h2 class="table-title">Liste des Utilisateurs</h2>
@@ -373,6 +484,7 @@ const closeNotification = () => {
                 <th>Utilisateur</th>
                 <th>Type</th>
                 <th>Institution</th>
+                <th>Permissions</th>
                 <th>Statut</th>
                 <th>Dernière connexion</th>
                 <th>Actions</th>
@@ -382,10 +494,14 @@ const closeNotification = () => {
               <tr v-for="(user, index) in filteredUsers" :key="user.id" class="table-row">
                 <td>
                   <div class="user-info">
-                    <div class="user-avatar">{{ user.avatar }}</div>
+                    <div class="user-avatar">
+                      <img v-if="typeof user.avatar === 'string' && user.avatar" :src="user.avatar" alt="Avatar" class="avatar-img">
+                     <div v-else class="avatar-initials">{{ user.name ? user.name.charAt(0).toUpperCase() : '' }}</div>
+                    </div>
                     <div class="user-details">
                       <p class="user-name">{{ user.name }}</p>
                       <p class="user-email">{{ user.email }}</p>
+                      <p class="user-phone">{{ user.phone }}</p>
                       <p class="user-role">Administrateur Fraude</p>
                     </div>
                   </div>
@@ -398,6 +514,17 @@ const closeNotification = () => {
                   </div>
                 </td>
                 <td class="institution-cell">{{ user.institution }}</td>
+                <td>
+                  <div class="permissions-list">
+                    <div v-for="permission in user.permissions" :key="permission" class="permission-badge">
+                      <component :is="getPermissionIcon(permission)" :size="12" />
+                      <span>{{ getPermissionName(permission) }}</span>
+                    </div>
+                    <div v-if="user.permissions.length === 0" class="no-permissions">
+                      Aucune permission
+                    </div>
+                  </div>
+                </td>
                 <td>
                   <span class="status-badge" :class="getStatusColor(user.status)">
                     {{ getStatusText(user.status) }}
@@ -446,36 +573,112 @@ const closeNotification = () => {
           </div>
           <div class="modal-body">
             <form @submit.prevent="addOrganization" class="user-form">
-              <div class="form-group">
-                <label class="form-label">Nom de l'organisation *</label>
-                <input type="text" v-model="organizationData.organizationName" class="form-input" required>
+              <!-- Informations de base -->
+              <div class="form-section">
+                <h3 class="section-title">
+                  <Building2 :size="20" />
+                  Informations de l'organisation
+                </h3>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Nom de l'organisation *</label>
+                    <input type="text" v-model="organizationData.organizationName" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Type d'organisation *</label>
+                    <select v-model="organizationData.organizationType" class="form-input" required>
+                      <option value="" disabled>Sélectionnez un type</option>
+                      <option value="mobile_operator">Opérateur Mobile</option>
+                      <option value="financial_institution">Institution Financière</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Adresse email *</label>
+                    <input type="email" v-model="organizationData.email" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Téléphone *</label>
+                    <input type="tel" v-model="organizationData.phone" class="form-input" required>
+                  </div>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Avatar</label>
+                  <input type="file" @change="handleAvatarUpload" class="form-input" accept="image/*">
+                  <div v-if="organizationData.avatarPreview" class="avatar-preview">
+                    <img :src="organizationData.avatarPreview" alt="Aperçu avatar" class="avatar-preview-img">
+                  </div>
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Type d'organisation *</label>
-                <select v-model="organizationData.organizationType" class="form-input" required>
-                  <option value="" disabled>Sélectionnez un type</option>
-                  <option value="mobile_operator">📱 Opérateur Mobile</option>
-                  <option value="financial_institution">🏦 Institution Financière</option>
-                </select>
+
+  
+              <div class="form-section">
+                <h3 class="section-title">
+                  <Shield :size="20" />
+                  Permissions et accès
+                </h3>
+                <p class="section-description">
+                  Sélectionnez les modules auxquels cet utilisateur aura accès
+                </p>
+                
+                <div class="permissions-header">
+                  <button 
+                    type="button" 
+                    @click="selectAllPermissions" 
+                    class="btn-select-all"
+                    :class="{ 'all-selected': organizationData.permissions.length === availablePermissions.length }"
+                  >
+                    <Check :size="16" />
+                    {{ organizationData.permissions.length === availablePermissions.length ? 'Désélectionner tout' : 'Sélectionner tout' }}
+                  </button>
+                  <span class="permissions-count">
+                    {{ organizationData.permissions.length }}/{{ availablePermissions.length }} sélectionnée(s)
+                  </span>
+                </div>
+
+                <div class="permissions-grid">
+                  <div 
+                    v-for="permission in availablePermissions" 
+                    :key="permission.key" 
+                    class="permission-card"
+                    :class="{ 'selected': organizationData.permissions.includes(permission.key) }"
+                    @click="togglePermission(permission.key)"
+                  >
+                    <div class="permission-header">
+                      <div class="permission-icon">
+                        <component :is="permission.icon" :size="20" />
+                      </div>
+                      <div class="permission-checkbox">
+                        <input 
+                          type="checkbox" 
+                          :checked="organizationData.permissions.includes(permission.key)"
+                          @change="togglePermission(permission.key)"
+                          @click.stop
+                        >
+                      </div>
+                    </div>
+                    <h4 class="permission-name">{{ permission.name }}</h4>
+                    <p class="permission-description">{{ permission.description }}</p>
+                  </div>
+                </div>
+
+                <div v-if="organizationData.permissions.length === 0" class="permissions-warning">
+                  <AlertTriangle :size="16" />
+                  <span>Veuillez sélectionner au moins une permission pour continuer</span>
+                </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Numéro d'enregistrement *</label>
-                <input type="text" v-model="organizationData.registrationNumber" class="form-input" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Adresse email *</label>
-                <input type="email" v-model="organizationData.email" class="form-input" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label">Site web</label>
-                <input type="url" v-model="organizationData.website" class="form-input">
-              </div>
+
               <div class="form-actions">
                 <button type="button" @click="closeModal" class="btn btn-secondary" title="Annuler">
                   Annuler
                 </button>
                 <button type="submit" class="btn btn-primary" :disabled="!isFormValid" title="Valider">
-                  Valider
+                  <Plus :size="16" />
+                  Créer l'utilisateur
                 </button>
               </div>
             </form>
@@ -728,6 +931,22 @@ const closeNotification = () => {
   justify-content: center;
   font-weight: 600;
   font-size: 0.875rem;
+  overflow: hidden;
+}
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.avatar-initials {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
 }
 .user-name {
   font-weight: 600;
@@ -735,6 +954,11 @@ const closeNotification = () => {
   margin-bottom: 0.25rem;
 }
 .user-email {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+.user-phone {
   color: #6b7280;
   font-size: 0.875rem;
   margin-bottom: 0.25rem;
@@ -764,6 +988,30 @@ const closeNotification = () => {
   font-weight: 500;
   color: #374151;
 }
+
+/* Permissions dans le tableau */
+.permissions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  max-width: 200px;
+}
+.permission-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  background: #f3f4f6;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #374151;
+}
+.no-permissions {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
 .status-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
@@ -835,7 +1083,7 @@ const closeNotification = () => {
 .modal-container {
   background: white;
   border-radius: 16px;
-  max-width: 900px;
+  max-width: 1000px;
   width: 100%;
   max-height: 90vh;
   overflow: hidden;
@@ -872,16 +1120,41 @@ const closeNotification = () => {
 }
 .modal-body {
   padding: 2rem;
-  max-height: 60vh;
+  max-height: 70vh;
   overflow-y: auto;
 }
-.modal-footer {
-  padding: 1.5rem 2rem;
-  border-top: 1px solid #e5e7eb;
+
+/* Form Sections */
+.form-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
   display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.section-description {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  justify-content: flex-end;
-  background: #f9fafb;
+  margin-bottom: 1rem;
 }
 .form-group {
   display: flex;
@@ -907,11 +1180,135 @@ const closeNotification = () => {
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
+
+/* Permissions Section */
+.permissions-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+.btn-select-all {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-select-all:hover {
+  background: #2563eb;
+}
+.btn-select-all.all-selected {
+  background: #dc2626;
+}
+.btn-select-all.all-selected:hover {
+  background: #b91c1c;
+}
+.permissions-count {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+.permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.permission-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+.permission-card:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+}
+.permission-card.selected {
+  border-color: #3b82f6;
+  background: #f0f9ff;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+.permission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.permission-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+.permission-card.selected .permission-icon {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+.permission-checkbox input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+.permission-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+}
+.permission-description {
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.4;
+}
+.permissions-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  color: #92400e;
+  font-size: 0.875rem;
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+.avatar-preview {
+  margin-top: 0.5rem;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #e5e7eb;
+}
+.avatar-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 /* Notification Styles */
 .notification {
@@ -983,6 +1380,12 @@ const closeNotification = () => {
     width: 100%;
     justify-content: flex-end;
   }
+  .permissions-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
 }
 @media (max-width: 768px) {
   .container {
@@ -1002,7 +1405,7 @@ const closeNotification = () => {
   .filters {
     justify-content: space-between;
   }
-  .modal-footer {
+  .form-actions {
     flex-direction: column;
   }
   .notification {
@@ -1018,6 +1421,9 @@ const closeNotification = () => {
   .users-table td {
     padding: 0.75rem 1rem;
   }
+  .permissions-list {
+    max-width: 150px;
+  }
 }
 @media (max-width: 480px) {
   .page-title {
@@ -1025,6 +1431,11 @@ const closeNotification = () => {
   }
   .modal-body {
     padding: 1.5rem;
+  }
+  .permissions-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
   }
 }
 </style>
